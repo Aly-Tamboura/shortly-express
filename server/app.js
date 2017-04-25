@@ -5,7 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
-// const user = require('./models/user.js');
+const hashAlg = require('./lib/hashUtils');
 const app = express();
 
 app.set('views', `${__dirname}/views`);
@@ -73,17 +73,43 @@ app.post('/links', (req, res, next) => {
 });
 
 app.post('/signup', (req, res, next) => {
-//  console.log(models.Users.createUser);
-  console.log(req.body)
- return models.Users.createUser(req.body, function(err, data) {
-  if (err) {
-    console.log(err)
-  } else {
-    console.log('success');
-    res.done();
-  }
- })
+//  console.log(req.body)
+  return models.Users.createUser(req.body)
+  .then( () => {
+    res.redirect('/');
+  })
+  .error( () => {
+    res.redirect('/signup');
+  })
+  .catch( () => {
+    res.end();
+  })
 });
+
+app.post('/login', (req, res, next) => {
+  var hashedPassword = hashAlg.encrypt(req.body.password);
+  return models.Users.validateUser(req.body)
+
+  .then( (item) => {
+//    console.log('.THEN BLOCK = ', item.password, hashedPassword);
+    if(item.username === req.body.username && item.password === hashedPassword){
+      res.redirect('/');
+    } else {
+      res.redirect('/login');
+    }
+  })
+
+  .error( () => {
+    res.redirect('/login');
+      res.end();
+  })
+
+  .catch( (item) => {
+    res.redirect('/login');
+    res.end(); 
+  })
+});
+
 
 
 /************************************************************/

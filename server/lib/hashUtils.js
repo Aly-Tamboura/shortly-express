@@ -4,12 +4,21 @@ const crypto = require('crypto');
 // Add any hashing utility functions below
 /************************************************************/
 
-var getIndexBelowMaxForKey = function(str, max) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = (hash << 5) + hash + str.charCodeAt(i);
-    hash = hash & hash; // Convert to 32bit integer
-    hash = Math.abs(hash);
-  }
-  return hash % max;
+var algorithm = 'aes-256-ctr';
+var password = 'd6F3Efeq';
+var encrypt = function(text) {
+  var cipher = crypto.createCipher(algorithm, password)
+  var crypted = cipher.update(text,'utf8','hex')
+  crypted += cipher.final('hex');
+  return crypted;
+}
+var decrypt = function(text){
+  var decipher = crypto.createDecipher(algorithm,password)
+  var dec = decipher.update(text,'hex','utf8')
+  dec += decipher.final('utf8');
+  return dec;
+}
+module.exports = {
+    encrypt: encrypt,
+    decrypt: decrypt,
 };
