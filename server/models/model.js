@@ -20,7 +20,7 @@ class Model {
 
   getAll() {
     let queryString = `SELECT * FROM ${this.tablename}`;
-    return executeQuery(queryString);
+    return executeQuery(queryString); 
   }
 
   get(options) {
