@@ -25,9 +25,9 @@ module.exports = (db) => {
           timestamp TIMESTAMP
         );`)
     })
-  /************************************************************/
-  /*          Add additional schema queries here              */
-  /************************************************************/
+    /************************************************************/
+    /*          Add additional schema queries here              */
+    /************************************************************/
     .then(() => {
       // Create clicks table
       return db.queryAsync(`
@@ -44,10 +44,10 @@ module.exports = (db) => {
         CREATE TABLE IF NOT EXISTS sessions (
           id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
           hash VARCHAR(100) UNIQUE,
-          user_id INT NOT NULL,
+          user_id INT DEFAULT NULL,
           timestamp TIMESTAMP
         );`);
-    }) 
+    })
     .error(err => {
       console.log(err);
     });

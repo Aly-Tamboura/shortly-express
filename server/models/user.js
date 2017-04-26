@@ -12,7 +12,7 @@ class Users extends Model {
   }
 
   createUser(body) {
-//	console.log('GOT TO HERE')
+    //  console.log('GOT TO HERE')
     var cryptPass = hashAlg.encrypt(body.password);
     var user = {
       username: body.username,

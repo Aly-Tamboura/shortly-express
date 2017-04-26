@@ -18,6 +18,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from ../public directory
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.use(function(req, res, next) {
+//  console.log('This is the request cookie', req.cookies);
+  next();
+});
+
+app.use(require('./middleware/cookieParser'));
+
+app.use(Auth.createSession);
+
+// ====================================================================
+// ==========  ENDPOINTS FOLLOW THIS LINE =============================
+// ====================================================================
 
 app.get('/', (req, res) => {
   res.render('index');
@@ -73,40 +85,40 @@ app.post('/links', (req, res, next) => {
 });
 
 app.post('/signup', (req, res, next) => {
-//  console.log(req.body)
+  //  console.log(req.body)
   return models.Users.createUser(req.body)
-  .then( () => {
-    res.redirect('/');
-  })
-  .error( () => {
-    res.redirect('/signup');
-  })
-  .catch( () => {
-    res.end();
-  })
+    .then(() => {
+      res.redirect('/');
+    })
+    .error(() => {
+      res.redirect('/signup');
+    })
+    .catch(() => {
+      res.end();
+    })
 });
 
 app.post('/login', (req, res, next) => {
   var hashedPassword = hashAlg.encrypt(req.body.password);
   return models.Users.validateUser(req.body)
 
-  .then( (item) => {
-//    console.log('.THEN BLOCK = ', item.password, hashedPassword);
-    if(item.username === req.body.username && item.password === hashedPassword){
+  .then((item) => {
+    //    console.log('.THEN BLOCK = ', item.password, hashedPassword);
+    if (item.username === req.body.username && item.password === hashedPassword) {
       res.redirect('/');
     } else {
       res.redirect('/login');
     }
   })
 
-  .error( () => {
+  .error(() => {
     res.redirect('/login');
-      res.end();
+    res.end();
   })
 
-  .catch( (item) => {
+  .catch((item) => {
     res.redirect('/login');
-    res.end(); 
+    res.end();
   })
 });
 
